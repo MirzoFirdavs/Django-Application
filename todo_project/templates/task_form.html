@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if form.instance.pk %}Редактировать задачу{% else %}Добавить задачу{% endif %}</title>
+</head>
+<body>
+    <h1>{% if form.instance.pk %}Редактировать задачу{% else %}Добавить задачу{% endif %}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <label for="category">Категория:</label>
+        <select name="category" id="category">
+            <option value="">Выберите категорию</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == form.instance.category.id %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Сохранить</button>
+    </form>
+
+    <a href="{% url 'task_list' %}">Назад к списку задач</a>
+
+    {% if form.errors %}
+        <div style="color: red;">
+            <p>Ошибки:</p>
+            <ul>
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ field.label }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</body>
+</html>
